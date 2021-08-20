@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+
+import subprocess
+import sys
+import time
+
+terminal_command = ["kitty", "-o" ,"hide_window_decorations yes"]
+
+def current_windows():
+    try:
+        application = terminal_command[0]
+        pid = subprocess.check_output(["pgrep",application]).decode("utf-8").strip()
+        return pid
+
+    except subprocess.CalledProcessError:
+        return []
+
+def open_window():
+    subprocess.Popen(terminal_command)
+    time.sleep(1)
+
+    return current_windows()
+
+def run_command(command):
+    carriage_return =   (" ; xdotool " + " key ") + "Return"
+    full_command = ("xdotool " + " type ") + ( command ) + carriage_return
+    print(full_command)
+
+    subprocess.Popen(full_command,shell=True)
+
+
+new_window_pid = open_window()
+
+tmux_command = " \"tmuxinator start " + (sys.argv[1]) + "\""
+run_command(tmux_command)
